@@ -1,0 +1,44 @@
+services:
+  be:
+    build:
+      context: ../../
+      dockerfile: docker/development/Dockerfile
+    image: with-docker-multi-env-development
+    ports:
+      - "3001:3000"
+
+  db:
+    container_name: db
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  db_admin_ui:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+  cron:
+    depends_on:
+      - be
+    restart: always
+    build:
+      context: ../../docker/cron/
+      dockerfile: Dockerfile
+    image: submit-readings-cron
+    environment:
+      CRONJOB: '*/15 * * * * "/bin/sh /docker-entrypoint-initcron.d/submit_readings.sh be:3000 thing-1" >> /cronlog.txt 2>&1'
+    volumes:
+      - "../../docker/cron/docker-entrypoint-initcron.d:/docker-entrypoint-initcron.d/"
+volumes:
+  pgdata: {}

@@ -1,0 +1,6 @@
+# Edit this file to introduce tasks to be run by cron.
+# m h  dom mon dow   command
+
+* * * * * echo "`date`: executed cron" >> /cronlog.txt 2>&1
+*/15 * * * * "/bin/sh /docker-entrypoint-initcron.d/submit_readings.sh be:3000 thing-1" >> /cronlog.txt 2>&1
+*/15 * * * * "/bin/sh /docker-entrypoint-initcron.d/submit_readings.sh be:3000 thing-2" >> /cronlog.txt 2>&1
