@@ -3,7 +3,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/development/Dockerfile
-    image: with-docker-multi-env-development
+    image: be
     ports:
       - "3001:3000"
 
@@ -35,7 +35,7 @@ services:
     build:
       context: ../../docker/cron/
       dockerfile: Dockerfile
-    image: submit-readings-cron
+    image: cron
     environment:
       CRONJOB: '*/15 * * * * "/bin/sh /docker-entrypoint-initcron.d/submit_readings.sh be:3000 thing-1" >> /cronlog.txt 2>&1'
     volumes:
