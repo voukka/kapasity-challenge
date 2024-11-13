@@ -1,16 +1,8 @@
-import { useEffect, useState } from "react";
-import { fetchDeviceReadings, fetchDevices } from "../lib/apiClient";
+import {useEffect, useState} from "react";
+import {fetchDeviceReadings, fetchDevices} from "@/lib/apiClient";
 import DeviceMap from "../components/DeviceMap";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { Device, Reading } from "../lib/interfaces";
+import {Device, Reading} from "@/lib/interfaces";
+import {FullnessChart} from "@/components/FullnessChart";
 
 export default function Dashboard() {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -69,23 +61,7 @@ export default function Dashboard() {
                 Fullness of {selectedDevice.device_id} at{" "}
                 {selectedDevice.location_name}
               </h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart
-                  data={readings}
-                  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="timestamp" />
-                  <YAxis yAxisId="right" orientation="right" unit={"%"} />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="fullness_level"
-                    stroke="#8884d8"
-                    yAxisId="right"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <FullnessChart data={readings}/>
             </>
           )}
         </div>
