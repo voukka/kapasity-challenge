@@ -9,7 +9,7 @@ cronjobs="${directory}cronjobs.txt"
 
 if [ -f "${cronjobs}" ]; then
     cronJobsfileExist=TRUE
-    # Inserting the conjobs from file into the crontab
+    # Inserting the cronjobs from file into the crontab
     cat "${cronjobs}" | crontab -
 fi
 
