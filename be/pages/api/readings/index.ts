@@ -21,9 +21,7 @@ export default async function handler(
         return res.status(400).json({ error: "Missing required fields" });
       }
 
-      const fullness_level_validated = parseInt(fullness_level, 10);
-
-      if (fullness_level_validated < 0 || fullness_level_validated > 100) {
+      if (fullness_level < 0 || fullness_level > 100) {
         return res.status(400).json({
           error: "Field `fullness_level` must be an integer between 0 and 100.",
         });
@@ -35,7 +33,7 @@ export default async function handler(
               INSERT INTO readings (device_id, fullness_level, timestamp)
               VALUES ($1, $2, $3)
             `,
-          [device_id, fullness_level_validated, timestamp],
+          [device_id, fullness_level, timestamp],
         );
 
         res.status(201).json({ message: "Reading added successfully" });
