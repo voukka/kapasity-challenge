@@ -14,7 +14,7 @@ env:
   # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ${{ vars.CONTAINER_NAME__BE }}          # set this to the name of the container in the
   # containerDefinitions section of your task definition
-#  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   BE_CONTAINER_OVERRIDE: ${{ secrets.BE_CONTAINER_OVERRIDE }}
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
           # push it to ECR so that it can
           # be deployed to ECS.
           # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f be/docker/production/Dockerfile be
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f be/docker/production/Dockerfile --build-arg DATABASE_URL="$DATABASE_URL" be
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -68,6 +68,6 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
-          run-task-container-overrides: ${{ env.BE_CONTAINER_OVERRIDE }}
+#          run-task-container-overrides: ${{ env.BE_CONTAINER_OVERRIDE }}
 #            environment: ${{ format('[{"name":"DATABASE_URL", "value":"{0}"}]', env.DATABASE_URL ) }}
 #            environment: '[{"name":"DATABASE_URL", "value":"'${{ env.DATABASE_URL }}'"}]'
