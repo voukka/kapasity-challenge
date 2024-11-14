@@ -14,7 +14,8 @@ env:
   # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ${{ vars.CONTAINER_NAME__BE }}          # set this to the name of the container in the
   # containerDefinitions section of your task definition
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+#  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  BE_CONTAINER_OVERRIDE: ${{ secrets.BE_CONTAINER_OVERRIDE }}
 
 jobs:
   deploy:
@@ -67,6 +68,6 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
-          run-task-container-overrides:
-            environment: ${{ format('[{"name":"DATABASE_URL", "value":"{0}"}]', env.DATABASE_URL ) }}
+          run-task-container-overrides: ${{ env.BE_CONTAINER_OVERRIDE }}
+#            environment: ${{ format('[{"name":"DATABASE_URL", "value":"{0}"}]', env.DATABASE_URL ) }}
 #            environment: '[{"name":"DATABASE_URL", "value":"'${{ env.DATABASE_URL }}'"}]'
