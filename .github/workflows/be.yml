@@ -68,5 +68,5 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
           run-task-container-overrides:
-            environment: ${{ format('[{"name":"DATABASE_URL", "value":"{0}"}]', ${{ env.DATABASE_URL }} ) }}
+            environment: ${{ format('[{"name":"DATABASE_URL", "value":"{0}"}]', env.DATABASE_URL ) }}
 #            environment: '[{"name":"DATABASE_URL", "value":"'${{ env.DATABASE_URL }}'"}]'
