@@ -60,7 +60,7 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-         #Using https://github.com/aws-actions/amazon-ecs-deploy-task-definition/releases/tag/v2.1.2
+        #Using https://github.com/aws-actions/amazon-ecs-deploy-task-definition/releases/tag/v2.1.2
         uses: aws-actions/amazon-ecs-deploy-task-definition@135af6c0ea24f888dcaad892bce3b31cc9e5da64
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
@@ -68,4 +68,5 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
           run-task-container-overrides:
-            environment: '[{"name":"DATABASE_URL", "value":"'${{ env.DATABASE_URL }}'"}]'
+            environment: ${{ format('[{"name":"DATABASE_URL", "value":"{0}"}]', {0}@', ${{ env.DATABASE_URL }} }}
+#            environment: '[{"name":"DATABASE_URL", "value":"'${{ env.DATABASE_URL }}'"}]'
