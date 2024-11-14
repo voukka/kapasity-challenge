@@ -31,6 +31,9 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
+# Installing bash so we can use it later for debug
+RUN apk update && apk add --no-cache bash curl
+
 ENV NODE_ENV=production
 
 RUN addgroup -g 1001 -S nodejs
