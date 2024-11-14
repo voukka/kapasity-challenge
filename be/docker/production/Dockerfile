@@ -1,7 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1
 
 FROM node:22-alpine AS base
-
+ARG DATABASE_URL
 # 1. Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
@@ -33,6 +33,10 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+RUN \
+if [[ -z "${DATABASE_URL}" ]]; then \
+    echo "DATABASE_URL=$DATABASE_URL" >> .env.production \
+fi
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
@@ -51,4 +55,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" node server.js
+CMD HOSTNAME="0.0.0.0" node --watch server.js
