@@ -54,4 +54,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" DATABASE_URL="$DATABASE_URL" node --watch server.js
+CMD HOSTNAME="0.0.0.0" node --env-file=.env.production --watch server.js
