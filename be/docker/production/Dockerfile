@@ -26,6 +26,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # This will do the trick, use the corresponding env file for each environment.
 COPY .env.production .env.production
+#RUN if [ -z "${DATABASE_URL}" ]; then echo "no env database url given"; else echo "DATABASE_URL=$DATABASE_URL" >> .env.production; fi
+RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.production
+
 RUN npm run build
 
 # 3. Production image, copy all the files and run next
@@ -33,7 +36,6 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-RUN if [ -z "${DATABASE_URL}" ]; then echo "no env database url given"; else echo "DATABASE_URL=$DATABASE_URL" >> .env.production; fi
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
@@ -52,4 +54,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" node --watch server.js
+CMD HOSTNAME="0.0.0.0" DATABASE_URL="$DATABASE_URL" node --watch server.js
