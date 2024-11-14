@@ -33,9 +33,7 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-RUN \
- if [ -z "${DATABASE_URL}" ]; then echo "DATABASE_URL=$DATABASE_URL" >> .env.production \
- fi
+RUN if [ -z "${DATABASE_URL}" ]; then echo "DATABASE_URL=$DATABASE_URL" >> .env.production; fi
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
