@@ -24,23 +24,33 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# This will do the trick, use the corresponding env file for each environment.
-COPY .env.production .env.production
-#RUN if [ -z "${DATABASE_URL}" ]; then echo "no env database url given"; else echo "DATABASE_URL=$DATABASE_URL" >> .env.production; fi
-RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.production
 
-RUN npm run build
+# This will do the trick, use the corresponding env file for each environment.
+COPY .env.production .env
+#RUN if [ -z "${DATABASE_URL}" ]; then echo "no env database url given"; else echo "DATABASE_URL=$DATABASE_URL" >> .env.production; fi
+
+#RUN echo "DATABASE_URL=$DATABASE_URL" >> .env.production
+
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
 # 3. Production image, copy all the files and run next
 FROM base AS runner
+RUN apk add --no-cache curl postgresql16-client
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/migrations ./migrations
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
@@ -54,4 +64,4 @@ EXPOSE 3000
 
 ENV PORT=3000
 
-CMD HOSTNAME="0.0.0.0" node --env-file="/app/.env.production"  server.js
+CMD HOSTNAME="0.0.0.0" node --env-file="/app/.env"  server.js
